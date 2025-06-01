@@ -7,8 +7,8 @@
 class Jugador {
 public:
     // Constructor único claro
-    Jugador(); 
-    Jugador(const std::string& nombre, bool esMaquina = false, int puntaje = 0);
+    Jugador(); // el puntaje se hcae igual a 0 para que no haya que inicializarlo
+    Jugador(const std::string& nombre, bool esMaquina = false, int puntaje = 0); // el  false es por defecto para indicar que no es una máquina
     Jugador(const std::string& nombre, int puntaje);
 
     std::string getNombre() const;

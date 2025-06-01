@@ -4,107 +4,123 @@
 #include <limits>
 #include <ctime>
 
-// Limpia la entrada estándar para evitar errores de lectura posteriores
-void limpiarEntrada() {
+// Implementación temporal de obtenerPalabraAleatoria
+std::string obtenerPalabraAleatoria() {
+    // Puedes reemplazar esto con la lógica real de selección de palabras
+    return "ejemplo";
+}
+
+// Limpia cualquier error en la entrada y descarta caracteres sobrantes
+void limpiarBuffer() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-// Lee un entero desde la entrada estándar, validando el rango y la entrada
-int leerEntero(const std::string& mensaje, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max()) {
+// Pide al usuario un número dentro de un rango, repite si se equivoca
+int pedirNumero(const std::string& mensaje, int minimo = std::numeric_limits<int>::min(), int maximo = std::numeric_limits<int>::max()) {
     int valor;
     while (true) {
         std::cout << mensaje;
         std::cin >> valor;
-        // Si la entrada falla o está fuera de rango, se limpia y se pide de nuevo
-        if (std::cin.fail() || valor < min || valor > max) {
-            std::cout << "Entrada inválida. Intente de nuevo.\n";
-            limpiarEntrada();
+        if (std::cin.fail() || valor < minimo || valor > maximo) {
+            std::cout << "Eso no es válido. Intenta otra vez.\n";
+            limpiarBuffer();
         } else {
-            limpiarEntrada();
+            limpiarBuffer();
             return valor;
         }
     }
 }
 
-// Lee una cadena simple (sin espacios) desde la entrada estándar
-std::string leerCadena(const std::string& mensaje) {
-    std::string input;
+// Pide una palabra al usuario
+std::string pedirTexto(const std::string& mensaje) {
+    std::string texto;
     std::cout << mensaje;
-    std::cin >> input;
-    return input;
+    std::cin >> texto;
+    return texto;
 }
 
+// Muestra el menú y devuelve la opción elegida
+int mostrarMenu() {
+    std::cout << "\n=== MENU PRINCIPAL ===\n";
+    std::cout << "1. Jugar Ahorcado\n";
+    std::cout << "2. Jugar Concentrese\n";
+    std::cout << "3. Salir\n";
+    return pedirNumero("Elige una opción: ", 1, 3);
+}
+
+// Modo para jugar al Ahorcado
+void jugarAhorcado() {
+    int modo = pedirNumero("\n1. Jugador vs Jugador\n2. Jugador vs CPU\nSelecciona el modo: ", 1, 2);
+    std::string nombre1 = pedirTexto("Nombre del jugador 1: ");
+    std::string nombre2, palabra;
+
+    Jugador* j1 = new Jugador(nombre1);
+    Jugador* j2 = nullptr;
+
+    if (modo == 1) {
+        nombre2 = pedirTexto("Nombre del jugador 2: ");
+        j2 = new Jugador(nombre2);
+
+        int quienEscribe = pedirNumero("¿Quién escribe la palabra secreta? (1 o 2): ", 1, 2);
+        palabra = pedirTexto((quienEscribe == 1 ? nombre1 : nombre2) + ", escribe la palabra secreta: ");
+
+        Ahorcado juego(j1, j2, palabra, false);
+        juego.jugar();
+
+    } else {
+        std::cout << "Se elegirá una palabra aleatoria del archivo.\n";
+        j2 = new Jugador("CPU", true);
+        // Suponiendo que hay una función global o utilitaria para obtener la palabra aleatoria:
+        palabra = obtenerPalabraAleatoria(); // Implementa esta función en otro archivo si no existe
+
+        Ahorcado juego(j1, j2, palabra, true);
+        juego.jugar();
+    }
+
+    delete j1;
+    delete j2;
+}
+
+// Modo para jugar a Concéntrese
+void jugarConcentrese() {
+    std::string nombre1 = pedirTexto("Nombre del jugador 1: ");
+    int modo = pedirNumero("1. Contra otro jugador\n2. Contra CPU\nElige el modo: ", 1, 2);
+
+    Jugador* j1 = new Jugador(nombre1);
+    Jugador* j2 = nullptr;
+
+    if (modo == 1) {
+        std::string nombre2 = pedirTexto("Nombre del jugador 2: ");
+        j2 = new Jugador(nombre2);
+    } else {
+        j2 = new Jugador("CPU", true);
+    }
+
+    Concentrese juego(j1, j2);
+    juego.jugar();
+
+    delete j1;
+    delete j2;
+}
+
+// Punto de entrada del programa
 int main() {
-    srand(static_cast<unsigned int>(time(nullptr))); // Inicializa la semilla para aleatoriedad
+    srand(static_cast<unsigned int>(time(nullptr))); // Inicia la aleatoriedad para los juegos
 
     while (true) {
-        std::cout << "\n=== MENU PRINCIPAL ===\n";
-        std::cout << "1. Jugar Ahorcado\n";
-        std::cout << "2. Jugar Concentrese\n";
-        std::cout << "3. Salir\n";
-
-        int opcion = leerEntero("Seleccione una opcion: ", 1, 3);
+        int opcion = mostrarMenu();
 
         if (opcion == 1) {
-            int modo = leerEntero("\n1. Jugador vs Jugador\n2. Jugador vs CPU\nSeleccione modo: ", 1, 2);
-            std::string nombre1 = leerCadena("Ingrese nombre del jugador 1: ");
-            std::string nombre2, palabra;
-
-            Jugador* j1 = new Jugador(static_cast<std::string>(nombre1));
-            Jugador* j2 = nullptr;
-
-            if (modo == 1) {
-                nombre2 = leerCadena("Ingrese nombre del jugador 2: ");
-                j2 = new Jugador(nombre2);
-
-                // Permite elegir quién escribe la palabra secreta y la solicita
-                int iniciador = leerEntero("¿Quién escribe la palabra secreta? (1 o 2): ", 1, 2);
-                palabra = leerCadena((iniciador == 1 ? nombre1 : nombre2) + ", escriba la palabra secreta: ");
-
-                // Crea el juego de ahorcado en modo jugador vs jugador
-                Ahorcado juego(j1, j2, palabra, false);
-                juego.jugar();
-            } else {
-                std::cout << "La palabra se seleccionará aleatoriamente del archivo.\n";
-                j2 = new Jugador("CPU", true);
-                // Usa una función externa para obtener una palabra aleatoria para el modo CPU
-                extern std::string obtenerPalabraAleatoria();
-                std::string palabraCPU = obtenerPalabraAleatoria();
-                // Crea el juego de ahorcado en modo jugador vs CPU
-                Ahorcado juego(j1, j2, palabraCPU, true);
-                juego.jugar();
-            }
-
-            delete j1;
-            delete j2;
-
+            jugarAhorcado();
         } else if (opcion == 2) {
-            std::string nombre1 = leerCadena("Ingrese nombre del jugador 1: ");
-            int modo = leerEntero("1. Contra otro jugador\n2. Contra CPU\nSeleccione modo: ", 1, 2);
-
-            Jugador* j1 = new Jugador(nombre1);
-            Jugador* j2 = nullptr;
-
-            if (modo == 1) {
-                std::string nombre2 = leerCadena("Ingrese nombre del jugador 2: ");
-                j2 = new Jugador(static_cast<std::string>(nombre2));
-            } else {
-                j2 = new Jugador("CPU", true);
-            }
-
-            // Crea el juego de Concentrese con los jugadores seleccionados
-            Concentrese juego(j1, j2);
-            juego.jugar();
-
-            delete j1;
-            delete j2;
-
+            jugarConcentrese();
         } else {
-            std::cout << "Saliendo del programa...\n";
+            std::cout << "Hasta pronto.\n";
             break;
         }
     }
 
     return 0;
 }
+

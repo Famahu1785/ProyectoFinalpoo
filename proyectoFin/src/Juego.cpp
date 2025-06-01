@@ -17,7 +17,7 @@ void Juego::mostrarMenu() {
         cin >> opcion;
 
         if (cin.fail()) {
-            cin.clear(); // Limpia el error
+            cin.clear();  // aqui se  Limpia el error
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Descarta la entrada incorrecta
             cout << "Entrada inválida. Por favor, ingrese un número." << endl;
             continue;
