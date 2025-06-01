@@ -5,6 +5,7 @@
 // Recibe el número de filas y columnas para la matriz del juego
 Base::Base(int filas, int columnas) : filas(filas), columnas(columnas) {
     std::vector<int> numeros;
+
     // Llenamos el vector 'numeros' con pares de números del 1 al 20
     for (int i = 1; i <= 20; ++i) {
         numeros.push_back(i);
@@ -12,9 +13,8 @@ Base::Base(int filas, int columnas) : filas(filas), columnas(columnas) {
     }
 
     // Mezclamos los números para que estén en posiciones aleatorias
-    // No usamos <algorithm> ni <cstdlib>, solo std::rand()
     // el rand se utiliza para generar números aleatorios (posiciones aleatorias)
-    for (int i = 0; i < numeros.size(); ++i) {
+    for (size_t i = 0; i < numeros.size(); ++i) {
         int j = i + (std::rand() % (numeros.size() - i)); // Elegimos una posición aleatoria a partir de i
         int temp = numeros[i];
         numeros[i] = numeros[j];
@@ -26,10 +26,10 @@ Base::Base(int filas, int columnas) : filas(filas), columnas(columnas) {
     descubiertos.resize(filas, std::vector<bool>(columnas, false));
 
     // Llenamos la matriz con los números mezclados
-    int idx = 0;
+    int index = 0;
     for (int i = 0; i < filas; ++i) {
         for (int j = 0; j < columnas; ++j) {
-            matriz[i][j] = numeros[idx++];
+            matriz[i][j] = numeros[index++];
         }
     }
 }
@@ -40,10 +40,11 @@ void Base::mostrar(bool oculto) const {
     std::cout << "\nBase:\n";
     for (int i = 0; i < filas; ++i) {
         for (int j = 0; j < columnas; ++j) {
-            if (descubiertos[i][j] || !oculto)
+            if (descubiertos[i][j] || !oculto) {
                 std::cout << matriz[i][j] << "\t"; // Muestra el número si está descubierto o si no hay ocultamiento
-            else
+            } else {
                 std::cout << "X\t"; // Muestra 'X' si está oculto
+            }
         }
         std::cout << "\n";
     }
@@ -65,3 +66,5 @@ bool Base::descubrir(int f1, int c1, int f2, int c2) {
 bool Base::estaDescubierto(int f, int c) const {
     return descubiertos[f][c];
 }
+
+

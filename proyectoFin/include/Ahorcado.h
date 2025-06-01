@@ -5,28 +5,39 @@
 #include <vector>
 #include <set>
 
+// Clase que implementa el juego del Ahorcado
 class Ahorcado : public Juego {
 private:
-    std::string palabraSecreta;
-    int intentos;
-    std::vector<std::string> partesCuerpo;// Partes del cuerpo que se muestran en el juego
-    std::set<char> letrasUsadas; // Letras que ya han sido adivinadas
-    Jugador* jugador1; // Puntero al primer jugador
-    Jugador* jugador2;
-    std::string palabraOculta; // Representación de la palabra oculta con guiones bajos
-    std::string palabraAdivinada; // Representación de la palabra adivinada por el jugador
-    bool cpu; // Indica si se está jugando contra la CPU
-    int turno; // Indica de quién es el turno (1 para jugador 1, 2 para jugador 2 o CPU)
-    int puntajeJugador1; // Puntaje del jugador 1
-    int puntajeJugador2; // Puntaje del jugador 2 (puede ser 0 si se juega contra la CPU)
-    bool contraMaquina;
+    std::string palabraSecreta;           // Palabra que el jugador debe adivinar
+    std::string palabraOculta;            // Representación de la palabra con guiones bajos
+    std::string palabraAdivinada;         // Palabra adivinada por el jugador hasta el momento
+    int intentos;                          // Número de intentos fallidos
+    int turno;                             // Turno actual (1 = jugador1, 2 = jugador2 o CPU)
+    int puntajeJugador1;                  // Puntaje acumulado del jugador 1
+    int puntajeJugador2;                  // Puntaje acumulado del jugador 2 (o CPU)
+    bool cpu;                              // Indica si se juega contra la CPU
+    bool contraMaquina;                   // Bandera duplicada para control extra (puede fusionarse con 'cpu')
 
-    void mostrarEstado(const std::string& oculta);// Muestra el estado actual del juego, incluyendo la palabra oculta y las partes del cuerpo
+    std::vector<std::string> partesCuerpo; // Partes del cuerpo mostradas al fallar
+    std::set<char> letrasUsadas;           // Letras que ya se intentaron
+
+    Jugador* jugador1; // Puntero al jugador 1
+    Jugador* jugador2; // Puntero al jugador 2 o CPU
+
+    // Muestra el estado actual del juego (palabra parcial, partes del cuerpo, intentos)
+    void mostrarEstado(const std::string& oculta);
 
 public:
-    Ahorcado(Jugador* j1, Jugador* j2, const std::string& palabra, bool cpu = false); // aqui con "jugador* j2" se permite que el segundo jugador sea nulo si se juega contra la CPU
-    ~Ahorcado() override; // esto se hace para asegurarse de que el destructor de la clase base se llame correctamente
+    // Constructor. Si se juega contra CPU, j2 puede ser nullptr.
+    Ahorcado(Jugador* j1, Jugador* j2, const std::string& palabra, bool cpu = false);
+
+    // Destructor virtual para asegurar liberación correcta en jerarquía
+    ~Ahorcado() override;
+
+    // Método que ejecuta el flujo completo del juego
     void jugar() override;
+
+    // Selecciona una palabra aleatoria desde el archivo palabras.txt
     std::string obtenerPalabraAlea();
 };
 

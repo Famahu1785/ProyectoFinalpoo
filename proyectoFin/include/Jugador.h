@@ -4,23 +4,24 @@
 
 #include <string>
 
+// Clase que representa a un jugador humano o CPU
 class Jugador {
 public:
-    // Constructor único claro
-    Jugador(); // el puntaje se hcae igual a 0 para que no haya que inicializarlo
-    Jugador(const std::string& nombre, bool esMaquina = false, int puntaje = 0); // el  false es por defecto para indicar que no es una máquina
-    Jugador(const std::string& nombre, int puntaje);
+    // Constructores
+    Jugador(); // Puntaje inicializado en 0
+    Jugador(const std::string& nombre, bool esMaquina = false, int puntaje = 0); // Por defecto no es CPU
+    Jugador(const std::string& nombre, int puntaje); // Constructor alternativo
 
+    // Métodos de acceso
     std::string getNombre() const;
-    int getPuntuacion() const;
-    void sumarPunto();
-    void resetPuntuacion();
     void setNombre(const std::string& nombre);
 
     int getPuntaje() const;
     void setPuntaje(int puntaje);
+
     bool esCPU() const;
 
+    // Métodos de control de puntaje
     void aumentarPuntaje(int cantidad = 1);
     void resetPuntaje();
 
